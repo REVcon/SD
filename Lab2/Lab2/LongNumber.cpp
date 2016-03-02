@@ -30,9 +30,20 @@ CLongNumber::CLongNumber(const string & arg)
 string CLongNumber::ToString()
 {
 	string result;
+	if (m_number.size() == 0)
+	{
+		return "0";
+	}
 	for (size_t i = 0; i < m_number.size(); ++i)
 	{
-		result = to_string(m_number[i]) + result;
+		if (i == m_number.size() - 1)
+		{
+			result = to_string(m_number[i]) + result;
+		}
+		else
+		{
+			result = RefillByZero(i) + result;
+		}
 	}
 	return result;
 }
@@ -48,7 +59,7 @@ CLongNumber& CLongNumber::operator = (const CLongNumber &other)
 	return *this;
 }
 
-unsigned CLongNumber::GetPart(const size_t arg) const
+unsigned CLongNumber::GetLevel(const size_t arg) const
 {
 	if (m_number.size() > arg)
 	{
@@ -57,7 +68,7 @@ unsigned CLongNumber::GetPart(const size_t arg) const
 	return 0;
 }
 
-void CLongNumber::DeleteEqualZeroParts()
+void CLongNumber::DeleteExtraLevel()
 {
 	bool toRepeatCycle = true;
 	while ((m_number.size() > 0) && toRepeatCycle)
@@ -91,7 +102,7 @@ CLongNumber const CLongNumber::operator + (CLongNumber const & other) const
 	for (size_t i = 0; i < length; i++)
 	{
 		part = 0;
-		part = GetPart(i) + other.GetPart(i) + overBase;
+		part = GetLevel(i) + other.GetLevel(i) + overBase;
 		result.m_number.push_back(part % m_base);
 		overBase = part / m_base;
 	}
@@ -106,12 +117,9 @@ CLongNumber const CLongNumber::operator + (CLongNumber const & other) const
 
 CLongNumber const CLongNumber::operator - (CLongNumber const & other) const
 {
-	bool isFirstLengthGreater = (m_number.size() < other.m_number.size());
-	bool isFirstGreaterIfLengthEqual = ((m_number.size() == other.m_number.size()) && (m_number[m_number.size() - 1] < other.m_number[other.m_number.size() - 1]));
-
-	if (isFirstLengthGreater || isFirstGreaterIfLengthEqual)
+	if (*this <= other)
 	{
-		throw std::logic_error("Second argument exceed first argument of subtraction");
+		return CLongNumber();
 	}
 	CLongNumber result = *this;
 	size_t len = m_number.size();
@@ -122,14 +130,14 @@ CLongNumber const CLongNumber::operator - (CLongNumber const & other) const
 			result.m_number[i + 1] --;
 			result.m_number[i] += m_base;
 		}
-		result.m_number[i] -= other.GetPart(i);
+		result.m_number[i] -= other.GetLevel(i);
 		if (result.m_number[i] / m_base > 0)
 		{
 			result.m_number[i + 1]++;
 			result.m_number[i] %= m_base;
 		}
 	}
-	result.DeleteEqualZeroParts();
+	result.DeleteExtraLevel();
 	return result;
 }
 
@@ -150,39 +158,46 @@ CLongNumber const CLongNumber::operator * (CLongNumber const & other) const
 		result.m_number[i + 1] += result.m_number[i] / m_base;
 		result.m_number[i] %= m_base;
 	}
-	result.DeleteEqualZeroParts();
+	result.DeleteExtraLevel();
 	return result;
 }
 
 CLongNumber const  CLongNumber :: operator / (CLongNumber const & other) const
 {
+	if (other == 0)
+	{
+		throw runtime_error("Division by zero");
+	}
+	if (*this < other)
+	{
+		return 0;
+	}
 	CLongNumber result;
 	CLongNumber curValue;
 	result.m_number.resize(m_number.size(), 0);
 	for (int i = m_number.size() - 1; i >= 0; i--)
 	{
-		curValue.LevelUp(); // * osn
+		curValue.IncreaseLevel();
 		curValue.m_number[0] = m_number[i];
-		// подбираем максимальное число x, такое что b * x <= curValue
-		int x = 0;
-		int l = 0;
-		int r = m_base;
-		while (l <= r)
+		int multiplier = 0;
+		int lowerBound = 0;
+		int upperBound = m_base;
+		while (lowerBound <= upperBound)
 		{
-			int m = (l + r) / 2;
+			int m = (lowerBound + upperBound) / 2;
 			CLongNumber cur = other * m;
 			if (cur <= curValue)
 			{
-				x = m;
-				l = m + 1;
+				multiplier = m;
+				lowerBound = m + 1;
 			}
 			else
-				r = m - 1;
+				upperBound = m - 1;
 		}
-		result.m_number[i] = x;
-		curValue = curValue - other * x;
+		result.m_number[i] = multiplier;
+		curValue = curValue - other * multiplier;
 	}
-	result.DeleteEqualZeroParts();
+	result.DeleteExtraLevel();
 	return result;
 }
 
@@ -214,18 +229,75 @@ bool const CLongNumber::operator > (CLongNumber const & other) const
 	return false;
 }
 
+
+bool const CLongNumber::operator < (CLongNumber const & other) const
+{
+	if (m_number.size() < other.m_number.size())
+	{
+		return true;
+	}
+	if (m_number.size() > other.m_number.size())
+	{
+		return false;
+	}
+	if (m_number.size() == other.m_number.size())
+	{
+		for (int i = static_cast<int>(m_number.size() - 1); i >= 0; --i)
+		{
+			if (m_number[i] < other.m_number[i])
+			{
+				return true;
+			}
+			if (m_number[i] > other.m_number[i])
+			{
+				return false;
+			}
+		}
+	}
+	return false;
+}
+
+bool const CLongNumber::operator >= (CLongNumber const & other) const
+{
+	return !(*this < other);
+}
+
 bool const CLongNumber::operator <= (CLongNumber const & other) const
 {
 	return !(*this > other);
 }
 
-void CLongNumber::LevelUp()
+bool const CLongNumber::operator == (CLongNumber const & other) const
+{
+	if (m_number.size() == other.m_number.size())
+	{
+		return equal(m_number.begin(), m_number.end(), other.m_number.begin(), equal_to<unsigned>());
+	}
+	return false;	
+}
+
+bool const CLongNumber::operator != (CLongNumber const & other) const
+{
+	return !(*this == other);
+}
+
+void CLongNumber::IncreaseLevel()
 {
 	m_number.resize(m_number.size() + 1);
 	for (int i = m_number.size() - 1; i >= 1; i--)
 	{
 		m_number[i] = m_number[i - 1];
 	}
+}
+
+string CLongNumber::RefillByZero(const size_t arg) const
+{
+	string result = to_string(m_number[arg]);
+	while (result.size() < m_baseLength)
+	{
+		result = '0' + result;
+	}
+	return move(result);
 }
 
 CLongNumber::~CLongNumber()

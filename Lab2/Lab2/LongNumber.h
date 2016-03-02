@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <cmath>
 
 class CLongNumber
 {
@@ -15,13 +17,18 @@ public:
 	CLongNumber const operator - (CLongNumber const & other) const;
 	CLongNumber const operator * (CLongNumber const & other) const;
 	CLongNumber const operator / (CLongNumber const & other) const;
+	bool const operator == (CLongNumber const & other) const;
+	bool const operator != (CLongNumber const & other) const;
 	bool const operator <= (CLongNumber const & other) const;
 	bool const operator > (CLongNumber const & other) const;
+	bool const operator >= (CLongNumber const & other) const;
+	bool const operator < (CLongNumber const & other) const;
 private:
-	unsigned GetPart(const size_t arg) const;
-	void DeleteEqualZeroParts();
-	void LevelUp();
-	const int m_base = 1000;
+	unsigned GetLevel(const size_t arg) const;
+	std::string RefillByZero(const size_t arg) const;
+	void DeleteExtraLevel();
+	void IncreaseLevel();
+	static const unsigned m_base = 1000;
 	const unsigned m_baseLength = static_cast<unsigned>(log10(m_base));
 	std::vector<unsigned> m_number;
 };

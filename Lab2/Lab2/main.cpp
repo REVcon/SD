@@ -40,7 +40,7 @@ void HandleInput(const MathSignToHandle &handlers, istream& inpStrm, ostream& ou
 	while (getline(inpStrm, curMathExpression))
 	{
 		istringstream expresson(curMathExpression);
-		std::string firstArg, secondArg, mathSign;
+		string firstArg, secondArg, mathSign;
 		if (expresson >> firstArg >> mathSign >> secondArg)
 		{
 			CLongNumber first(firstArg);
@@ -48,8 +48,15 @@ void HandleInput(const MathSignToHandle &handlers, istream& inpStrm, ostream& ou
 			auto it = handlers.find(mathSign);
 			if (it != handlers.cend())
 			{
-				auto result = it->second(first, second);
-				outStrm << first.ToString() << ' ' + mathSign + ' ' << second.ToString() << " = " << result.ToString() << endl;
+				try
+				{
+					auto result = it->second(first, second);
+					outStrm << first.ToString() << ' ' + mathSign + ' ' << second.ToString() << " = " << result.ToString() << endl;
+				}
+				catch (const std::runtime_error &e)
+				{
+					outStrm << e.what() << endl;
+				}			
 			}
 			else
 			{
@@ -60,8 +67,7 @@ void HandleInput(const MathSignToHandle &handlers, istream& inpStrm, ostream& ou
 		else
 		{
 			outStrm << "Invalid math expression.\n";
-		}
-		
+		}		
 	}
 }
 

@@ -1,8 +1,9 @@
 #pragma once
 #include "IFactory.h"
 #include "Rectangle.h"
+#include "Singleton.h"
 
-class RectangleFactory : IFactory
+class RectangleFactory : public CFactory
 {
 public:
 

@@ -16,27 +16,12 @@
 
 using namespace std;
 
-typedef function<shared_ptr<CShape>(string &paramsStr)> Handler;
-typedef map<string, Handler> StringToHadlerMap;
-
-
-shared_ptr<CShape> HandleCircle(string &paramsStr)
+void HandleInput(istream& inpStrm, ostream& outStrm)
 {
-	return Singleton<CircleFactory>::GetInstance()->CreateShape(paramsStr);
-}
-
-shared_ptr<CShape> HandleRectangle(string &paramsStr)
-{
-	return Singleton<RectangleFactory>::GetInstance()->CreateShape(paramsStr);
-}
-
-shared_ptr<CShape> HandleTriangle(string &paramsStr)
-{
-	return Singleton<TriangleFactory>::GetInstance()->CreateShape(paramsStr);
-}
-
-void HandleInput(const StringToHadlerMap &handlers, istream& inpStrm, ostream& outStrm)
-{
+	std::map<string, shared_ptr<CFactory>> handlers;
+	handlers["CIRCLE:"] = Singleton<CircleFactory>::GetInstance();
+	handlers["RECTANGLE:"] = Singleton<RectangleFactory>::GetInstance();
+	handlers["TRIANGLE:"] = Singleton<TriangleFactory>::GetInstance();
 	string shapeType;
 	while (inpStrm >> shapeType)
 	{
@@ -47,7 +32,7 @@ void HandleInput(const StringToHadlerMap &handlers, istream& inpStrm, ostream& o
 		{
 			try
 			{
-				auto res = it->second(params);
+				auto res = it->second->CreateShape(params);
 				outStrm << shapeType << " P=" << res->GetPerimeter() << "; S=" << res->GetSquare() << endl;
 			}
 			catch (const std::invalid_argument &e)
@@ -60,17 +45,14 @@ void HandleInput(const StringToHadlerMap &handlers, istream& inpStrm, ostream& o
 			outStrm << "Unknown shape type: " << shapeType << endl;
 		}
 	}
+	Singleton<CircleFactory>::destroy();
+	Singleton<RectangleFactory>::destroy();
+	Singleton<TriangleFactory>::destroy();
 }
 
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	StringToHadlerMap handlers;
-
-	handlers["CIRCLE:"] = HandleCircle;
-	handlers["RECTANGLE:"] = HandleRectangle;
-	handlers["TRIANGLE:"] = HandleTriangle;
-
 	if (argc != 3)
 	{
 		cout << "Invalid parametrs, expected <input> <output> file" << endl;
@@ -79,7 +61,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	inpStrm.open(argv[1]);
 	ofstream outStrm;
 	outStrm.open(argv[2]);
-	HandleInput(handlers, inpStrm, outStrm);
+	HandleInput(inpStrm, outStrm);
 	outStrm.close();
 	return 0;
 }

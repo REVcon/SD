@@ -1,8 +1,9 @@
 #pragma once
 #include "IFactory.h"
 #include "Circle.h"
+#include "Singleton.h"
 
-class CircleFactory : public IFactory
+class CircleFactory : public CFactory
 {
 public:
 	std::shared_ptr<CShape> CreateShape(std::string &paramsStr)

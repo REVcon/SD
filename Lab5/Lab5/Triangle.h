@@ -1,5 +1,5 @@
 #pragma once
-# include "Shape.h"
+#include "Shape.h"
 
 class CTriangle final : public CShape
 {
@@ -8,6 +8,7 @@ public:
 	~CTriangle(void);
 	CLongNumber GetPerimeter();
 	CLongNumber GetSquare();
+	void Accept(IVisitor&v);
 
 private:
 	CLongNumber m_firstSide;

@@ -1,4 +1,5 @@
 #include "Rectangle.h"
+#include "IVisitior.h"
 
 
 CRectangle::CRectangle(const Point& first, const Point& second)
@@ -19,4 +20,9 @@ CLongNumber CRectangle::GetPerimeter()
 CLongNumber CRectangle::GetSquare()
 {
 	return m_firstSide * m_secondSide;
+}
+
+void CRectangle::Accept(IVisitor&v)
+{ 
+	v.Visit(*this); 
 }

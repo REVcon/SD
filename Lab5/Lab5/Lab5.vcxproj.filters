@@ -51,7 +51,7 @@
     <ClInclude Include="IVisitior.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StringInformer.h">
+    <ClInclude Include="GetShapeInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,7 +74,7 @@
     <ClCompile Include="LongNumber\LongNumber.cpp">
       <Filter>CLongNumber</Filter>
     </ClCompile>
-    <ClCompile Include="StringInformer.cpp">
+    <ClCompile Include="GetShapeInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

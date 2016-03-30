@@ -8,18 +8,18 @@
 #include <sstream>
 #include "LongNumber\LongNumber.h"
 
+class IVisitor;
+
 class CShape
 {
 public:
 	CShape(void);
-
 	virtual ~CShape(void);
-
 	virtual CLongNumber GetPerimeter() = 0;
-
 	virtual CLongNumber GetSquare() = 0;
-
+	virtual void Accept(IVisitor &v) = 0;
 };
+
 
 struct Point
 {

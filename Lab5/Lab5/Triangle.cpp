@@ -1,4 +1,5 @@
 #include "Triangle.h"
+#include "IVisitior.h"
 
 
 CTriangle::CTriangle(const Point& first, const Point& second, const Point& third)
@@ -23,4 +24,9 @@ CLongNumber CTriangle::GetSquare()
 	CLongNumber p = GetPerimeter() / 2;
 	CLongNumber square = Sqrt(p * (p - m_firstSide) * (p - m_secondSide) * (p - m_thirdSide));
 	return square;
+}
+
+void CTriangle::Accept(IVisitor&v)
+{
+	v.Visit(*this);
 }

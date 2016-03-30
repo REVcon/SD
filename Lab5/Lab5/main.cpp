@@ -13,6 +13,7 @@
 #include "CircleFactory.h"
 #include "RectangleFactory.h"
 #include "Singleton.h"
+#include "GetShapeInfo.h"
 
 using namespace std;
 
@@ -23,6 +24,7 @@ void HandleInput(istream& inpStrm, ostream& outStrm)
 	handlers["RECTANGLE:"] = Singleton<RectangleFactory>::GetInstance();
 	handlers["TRIANGLE:"] = Singleton<TriangleFactory>::GetInstance();
 	string shapeType;
+	CGetShapeInfo info;
 	while (inpStrm >> shapeType)
 	{
 		auto it = handlers.find(shapeType);
@@ -33,7 +35,8 @@ void HandleInput(istream& inpStrm, ostream& outStrm)
 			try
 			{
 				auto res = it->second->CreateShape(params);
-				outStrm << shapeType << " P=" << res->GetPerimeter().ToString() << "; S=" << res->GetSquare().ToString() << endl;
+				res->Accept(info);
+				outStrm << info.GetValue() << endl;
 			}
 			catch (const std::invalid_argument &e)
 			{

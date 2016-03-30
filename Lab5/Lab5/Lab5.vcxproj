@@ -73,7 +73,7 @@
     <ClInclude Include="RectangleFactory.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Singleton.h" />
-    <ClInclude Include="StringInformer.h" />
+    <ClInclude Include="GetShapeInfo.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="TriangleFactory.h" />
   </ItemGroup>
@@ -83,7 +83,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Shape.cpp" />
-    <ClCompile Include="StringInformer.cpp" />
+    <ClCompile Include="GetShapeInfo.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

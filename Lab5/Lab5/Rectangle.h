@@ -4,11 +4,11 @@
 class CRectangle final : public CShape
 {
 public:
-
 	CRectangle(const Point& first, const Point& second);
 	~CRectangle(void);
 	CLongNumber GetPerimeter();
 	CLongNumber GetSquare();
+	void Accept(IVisitor&v);
 
 private:
 	CLongNumber m_firstSide;

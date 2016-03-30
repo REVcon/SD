@@ -8,6 +8,7 @@ public:
 	~CCircle(void);
 	virtual CLongNumber GetPerimeter();
 	virtual CLongNumber GetSquare();
+	void Accept(IVisitor&v);
 private:
 	CLongNumber m_radius;
 	const CLongNumber PI = CLongNumber("31415926535");

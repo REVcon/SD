@@ -3,7 +3,6 @@
 #include "Rectangle.h"
 #include <functional>
 #include <map>
-#include <memory>
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -18,7 +17,7 @@ using namespace std;
 
 void HandleInput(istream& inpStrm, ostream& outStrm)
 {
-	std::map<string, CFactory*> handlers;
+	std::map<string, shared_ptr<CFactory>> handlers;
 	handlers["CIRCLE:"] = Singleton<CircleFactory>::GetInstance();
 	handlers["RECTANGLE:"] = Singleton<RectangleFactory>::GetInstance();
 	handlers["TRIANGLE:"] = Singleton<TriangleFactory>::GetInstance();
@@ -47,7 +46,7 @@ void HandleInput(istream& inpStrm, ostream& outStrm)
 	}
 	Singleton<CircleFactory>::destroy();
 	Singleton<RectangleFactory>::destroy();
-	Singleton<TriangleFactory>::destroy();
+	Singleton<TriangleFactory>::destroy();	
 }
 
 

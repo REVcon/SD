@@ -7,7 +7,7 @@ template<typename T>
 class Singleton
 {
 public:
-	static T* GetInstance();
+	static std::shared_ptr<T> GetInstance();
 	static void destroy();
 
 private:
@@ -16,29 +16,30 @@ private:
 	Singleton& operator=(Singleton const&){};
 
 protected:
-	static T* m_instance;
+	static std::shared_ptr<T> m_instance;
 
-	Singleton(){ m_instance = static_cast <T*> (this); };
-	~Singleton(){  };
+	Singleton()
+	{ 
+		m_instance = static_cast <std::shared_ptr<T>> (this);
+	};
+	~Singleton(){};
 };
 
 template<typename T>
-typename T* Singleton<T>::m_instance = 0;
+typename std::shared_ptr<T> Singleton<T>::m_instance = nullptr;
 
 template<typename T>
-T* Singleton<T>::GetInstance()
+std::shared_ptr<T> Singleton<T>::GetInstance()
 {
 	if (!m_instance)
 	{
-		Singleton<T>::m_instance = new T();
+		Singleton<T>::m_instance = std::make_shared<T>(T());
 	}
-
 	return m_instance;
 }
 
 template<typename T>
 void Singleton<T>::destroy()
 {
-	delete Singleton<T>::m_instance;
-	Singleton<T>::m_instance = 0;
+	Singleton<T>::m_instance = nullptr;
 }

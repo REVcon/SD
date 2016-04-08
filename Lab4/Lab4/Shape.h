@@ -11,9 +11,9 @@
 class CShape
 {
 public:
-	CShape(void);
+	CShape(void){};
 
-	virtual ~CShape(void);
+	virtual ~CShape(void){};
 
 	virtual CLongNumber GetPerimeter() = 0;
 

@@ -1,16 +1,5 @@
 #include "Shape.h"
 
-
-CShape::CShape()
-{
-}
-
-
-CShape::~CShape()
-{
-}
-
-
 Point Parser::GetPoint(std::string & arg)
 {
 	size_t beginIndex = arg.find("=");
